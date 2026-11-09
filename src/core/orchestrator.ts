@@ -102,7 +102,7 @@ import { configuredConnectorProviders } from "../credentials/connector-status.ts
 import { CONNECTOR_HOSTS } from "../connectors/oauth.ts";
 import { SANDBOX_MODEL_PREFIX } from "../api/contract.ts";
 import { estimateCostUsd } from "../ratelimit/budget.ts";
-import { createSpendLimits, spendLimitNote, spendLimitRefusal } from "../ratelimit/spend-limits.ts";
+import { spendLimitNote, spendLimitRefusal } from "../ratelimit/spend-limits.ts";
 import {
   mintCapabilityToken,
   CAPABILITY_TTL_MS,
@@ -304,12 +304,7 @@ const DEFAULT_APPROVAL_SUMMARY_TIMEOUT_MS = 6_000;
 const DIRECTORY_INDEX_CACHE_MAX_ENTRIES = 100;
 
 export function createOrchestrator(deps: OrchestratorDeps): Orchestrator {
-  const config = deps.config;
-  const spendReport = deps.sessions.spendReport?.bind(deps.sessions);
-  const spendLimits =
-    config && spendReport
-      ? createSpendLimits({ orgId, getSpendLimit: (scope) => config.getSpendLimitDurable(scope), spendReport })
-      : undefined;
+  const spendLimits = deps.spendLimits;
   const pending = deps.approvals;
   const transcripts = createTranscriptSource(deps.sessions);
   const approvalGrants = deps.approvalGrants;
